@@ -1,0 +1,376 @@
+
+<style>
+  * { box-sizing: border-box; }
+  .wrap { padding: 1rem 0; font-family: var(--font-sans); }
+  .center-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 320px; gap: 1.25rem; }
+  .screen-title { font-size: 22px; font-weight: 500; color: var(--color-text-primary); text-align: center; }
+  .screen-sub { font-size: 14px; color: var(--color-text-secondary); text-align: center; margin-top: -10px; }
+  .player-btns { display: flex; gap: 12px; }
+  .player-btn { padding: 14px 24px; border-radius: var(--border-radius-lg); border: 0.5px solid var(--color-border-secondary); background: var(--color-background-primary); font-size: 15px; font-weight: 500; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 6px; min-width: 130px; }
+  .player-btn:hover { background: var(--color-background-secondary); }
+  .av { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 500; font-size: 14px; }
+  .av-a { background: #E6F1FB; color: #0C447C; }
+  .av-b { background: #EEEDFE; color: #3C3489; }
+  .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; }
+  .header-left { display: flex; align-items: center; gap: 10px; }
+  .header h2 { font-size: 20px; font-weight: 500; margin: 0; color: var(--color-text-primary); }
+  .badge-tag { background: #E6F1FB; color: #0C447C; font-size: 12px; font-weight: 500; padding: 3px 10px; border-radius: 20px; }
+  .logout-btn { font-size: 12px; color: var(--color-text-secondary); background: none; border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 4px 10px; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+  .logout-btn:hover { background: var(--color-background-secondary); }
+  .scoreboard { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 1.25rem; }
+  .player-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; }
+  .player-card.leading { border: 2px solid #378ADD; }
+  .plabel { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 6px; }
+  .pname-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .pname { font-size: 15px; font-weight: 500; color: var(--color-text-primary); }
+  .shares-big { font-size: 28px; font-weight: 500; color: var(--color-text-primary); line-height: 1; }
+  .shares-unit { font-size: 12px; color: var(--color-text-secondary); margin-top: 3px; }
+  .diff-label { font-size: 11px; margin-top: 6px; }
+  .winner-badge { background: #EAF3DE; color: #27500A; padding: 2px 8px; border-radius: 10px; display: inline-block; }
+  .tie-badge { background: #FAEEDA; color: #633806; padding: 2px 8px; border-radius: 10px; display: inline-block; }
+  .bar-section { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 12px 14px; margin-bottom: 1.25rem; }
+  .bar-label { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 8px; }
+  .bar-wrap { display: flex; height: 10px; border-radius: 6px; overflow: hidden; background: var(--color-border-tertiary); }
+  .bar-a { background: #378ADD; transition: width 0.4s; }
+  .bar-b { background: #7F77DD; transition: width 0.4s; }
+  .bar-legend { display: flex; gap: 16px; margin-top: 6px; font-size: 12px; color: var(--color-text-secondary); }
+  .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+  .dot-a { background: #378ADD; }
+  .dot-b { background: #7F77DD; }
+  .input-section { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; margin-bottom: 1.25rem; }
+  .input-title { font-size: 14px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 12px; }
+  .input-grid { display: grid; grid-template-columns: 1.2fr 1fr 1fr auto; gap: 8px; align-items: end; }
+  .input-group { display: flex; flex-direction: column; gap: 4px; }
+  .input-group label { font-size: 12px; color: var(--color-text-secondary); }
+  input[type=date], input[type=number], select { width: 100%; font-size: 14px; }
+  .add-btn { background: #185FA5; color: #fff; border: none; border-radius: var(--border-radius-md); padding: 0 16px; font-size: 14px; font-weight: 500; cursor: pointer; height: 36px; white-space: nowrap; }
+  .add-btn:hover { background: #0C447C; }
+  .add-btn:disabled { background: #888; cursor: not-allowed; }
+  .history-section { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); overflow: hidden; }
+  .history-header { padding: 1rem 1.25rem 0; }
+  .history-title-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .history-title { font-size: 14px; font-weight: 500; color: var(--color-text-primary); }
+  .refresh-btn { font-size: 12px; color: var(--color-text-secondary); background: none; border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 3px 10px; cursor: pointer; display: flex; align-items: center; gap: 4px; }
+  .refresh-btn:hover { background: var(--color-background-secondary); }
+  .tabs { display: flex; border-bottom: 1px solid var(--color-border-tertiary); }
+  .tab-btn { font-size: 13px; font-weight: 500; padding: 8px 16px; background: none; border: none; border-bottom: 2px solid transparent; cursor: pointer; color: var(--color-text-secondary); margin-bottom: -1px; }
+  .tab-btn.active { color: #185FA5; border-bottom-color: #185FA5; }
+  .tab-btn:hover:not(.active) { color: var(--color-text-primary); }
+  .table-wrap { max-height: 300px; overflow-y: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead th { position: sticky; top: 0; background: var(--color-background-secondary); font-size: 11px; font-weight: 500; color: var(--color-text-secondary); text-align: left; padding: 7px 10px; border-bottom: 0.5px solid var(--color-border-tertiary); }
+  tbody tr { border-bottom: 0.5px solid var(--color-border-tertiary); }
+  tbody tr:last-child { border-bottom: none; }
+  tbody td { padding: 8px 10px; color: var(--color-text-primary); vertical-align: middle; }
+  .pill-buy { font-size: 11px; background: #EAF3DE; color: #27500A; padding: 2px 8px; border-radius: 8px; }
+  .pill-sell { font-size: 11px; background: #FCEBEB; color: #791F1F; padding: 2px 8px; border-radius: 8px; }
+  .who-a { color: #185FA5; font-weight: 500; }
+  .who-b { color: #534AB7; font-weight: 500; }
+  .act-btns { display: flex; gap: 4px; justify-content: flex-end; }
+  .icon-btn { background: none; border: none; color: var(--color-text-secondary); cursor: pointer; font-size: 14px; padding: 2px 3px; border-radius: 4px; line-height: 1; }
+  .icon-btn:hover { color: var(--color-text-primary); background: var(--color-background-secondary); }
+  .icon-btn.del:hover { color: #E24B4A; }
+  .empty-msg { font-size: 13px; color: var(--color-text-secondary); text-align: center; padding: 1.5rem 0; }
+  .edit-tr td { padding: 6px 8px; background: var(--color-background-secondary); }
+  .edit-tr input, .edit-tr select { font-size: 12px; padding: 3px 6px; height: 28px; width: 100%; }
+  .save-btn { background: #185FA5; color: #fff; border: none; border-radius: var(--border-radius-md); padding: 3px 10px; font-size: 12px; cursor: pointer; }
+  .cancel-btn { background: none; border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 3px 8px; font-size: 12px; cursor: pointer; color: var(--color-text-secondary); }
+  .running-pos { color: #1D9E75; font-weight: 500; }
+  .running-zero { color: var(--color-text-secondary); }
+  .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #2C2C2A; color: #fff; font-size: 13px; padding: 8px 18px; border-radius: var(--border-radius-md); opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 999; white-space: nowrap; }
+  .toast.show { opacity: 1; }
+  .err-box { background: #FCEBEB; color: #791F1F; border-radius: var(--border-radius-md); padding: 10px 14px; font-size: 13px; margin-bottom: 1rem; }
+</style>
+
+<div class="wrap" id="app"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const SUPABASE_URL = 'https://sofzwdnbxjhlovffmddj.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNvZnp3ZG5ieGpobG92ZmZtZGRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4Mjc5MjksImV4cCI6MjA5NDQwMzkyOX0.kbmUS1BF6lMCYEhGdVqkwkJK7_6Ziqgm25cq0kMl2QA';
+const API = SUPABASE_URL + '/rest/v1/entries';
+const HEADERS = {
+  'apikey': SUPABASE_KEY,
+  'Authorization': 'Bearer ' + SUPABASE_KEY,
+  'Content-Type': 'application/json',
+  'Prefer': 'return=representation'
+};
+
+const NAMES = { a: '전재홍', b: '김태언' };
+const INITIALS = { a: '전', b: '김' };
+const AV_CLS = { a: 'av-a', b: 'av-b' };
+
+let currentUser = null;
+let entries = [];
+let editingId = null;
+let activeTab = 'all';
+
+function todayStr() { return new Date().toISOString().slice(0, 10); }
+function fmtDate(iso) { if (!iso) return ''; const p = String(iso).slice(0,10).split('-'); return `${p[1]}/${p[2]}`; }
+function fmtShares(n) { const v = Math.round(Number(n) * 10000) / 10000; return v % 1 === 0 ? String(v) : parseFloat(v.toFixed(4)).toString(); }
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+async function loadEntries() {
+  const r = await fetch(API + '?order=id.desc', { headers: HEADERS });
+  if (!r.ok) { const err = await r.text(); throw new Error(err); }
+  return r.json();
+}
+
+async function insertEntry(row) {
+  const r = await fetch(API, { method: 'POST', headers: HEADERS, body: JSON.stringify(row) });
+  if (!r.ok) { const err = await r.text(); throw new Error(err); }
+  return r.json();
+}
+
+async function updateEntry(id, row) {
+  const r = await fetch(API + '?id=eq.' + id, { method: 'PATCH', headers: { ...HEADERS, 'Prefer': 'return=minimal' }, body: JSON.stringify(row) });
+  if (!r.ok) { const err = await r.text(); throw new Error(err); }
+}
+
+async function deleteEntryApi(id) {
+  const r = await fetch(API + '?id=eq.' + id, { method: 'DELETE', headers: { ...HEADERS, 'Prefer': 'return=minimal' } });
+  if (!r.ok) { const err = await r.text(); throw new Error(err); }
+}
+
+function calcShares(player) {
+  return entries.filter(e => e.player === player).reduce((s, e) => {
+    const sh = parseFloat(e.shares) || 0;
+    return e.type === 'sell' ? s - sh : s + sh;
+  }, 0);
+}
+
+function attachRunning() {
+  const sorted = [...entries].sort((a, b) => String(a.date).localeCompare(String(b.date)) || Number(a.id) - Number(b.id));
+  const run = { a: 0, b: 0 };
+  const map = {};
+  sorted.forEach(e => {
+    const sh = parseFloat(e.shares) || 0;
+    run[e.player] = Math.round((run[e.player] + (e.type === 'sell' ? -sh : sh)) * 10000) / 10000;
+    map[e.id] = run[e.player];
+  });
+  entries.forEach(e => e._running = map[e.id] ?? 0);
+}
+
+function renderLogin() {
+  document.getElementById('app').innerHTML = `
+    <div class="center-screen">
+      <div class="screen-title">QQQM 경쟁 트래커</div>
+      <div class="screen-sub">누구로 입장할까요?</div>
+      <div class="player-btns">
+        <button class="player-btn" onclick="login('a')"><div class="av av-a">전</div>전재홍</button>
+        <button class="player-btn" onclick="login('b')"><div class="av av-b">김</div>김태언</button>
+      </div>
+    </div>`;
+}
+
+async function login(u) {
+  currentUser = u; editingId = null;
+  document.getElementById('app').innerHTML = `<div style="text-align:center;padding:3rem;font-size:13px;color:var(--color-text-secondary);">불러오는 중...</div>`;
+  try {
+    entries = await loadEntries();
+    attachRunning();
+    renderMain();
+  } catch(e) {
+    document.getElementById('app').innerHTML = `<div style="padding:1rem;"><div class="err-box">연결 실패: ${e.message}</div><button onclick="renderLogin()" style="margin-top:8px;font-size:13px;cursor:pointer;">← 돌아가기</button></div>`;
+  }
+}
+
+function logout() { currentUser = null; editingId = null; renderLogin(); }
+
+function renderMain() {
+  attachRunning();
+  const sharesA = Math.round(calcShares('a') * 10000) / 10000;
+  const sharesB = Math.round(calcShares('b') * 10000) / 10000;
+  const total = sharesA + sharesB;
+  const pctA = total === 0 ? 50 : Math.round(sharesA / total * 100);
+  const pctB = 100 - pctA;
+  const leadA = sharesA > sharesB ? 'leading' : '';
+  const leadB = sharesB > sharesA ? 'leading' : '';
+  const diff = fmtShares(Math.abs(sharesA - sharesB));
+
+  function badge(mine, other) {
+    if (total === 0) return '';
+    if (mine > other) return `<div class="diff-label"><span class="winner-badge">👑 +${diff}주 앞서는 중!</span></div>`;
+    if (mine < other) return `<div class="diff-label"><span style="font-size:11px;color:var(--color-text-secondary);">${diff}주 뒤처지는 중 💪</span></div>`;
+    return `<div class="diff-label"><span class="tie-badge">🤝 동점!</span></div>`;
+  }
+
+  const tabsHTML = [
+    { key: 'all', label: '전체' },
+    { key: 'a', label: '전재홍' },
+    { key: 'b', label: '김태언' },
+  ].map(t => `<button class="tab-btn ${activeTab===t.key?'active':''}" onclick="setTab('${t.key}')">${t.label}</button>`).join('');
+
+  const filtered = (activeTab === 'all' ? [...entries] : entries.filter(e => e.player === activeTab))
+    .sort((a, b) => String(b.date).localeCompare(String(a.date)) || Number(b.id) - Number(a.id));
+
+  let rowsHTML = '';
+  if (filtered.length === 0) {
+    rowsHTML = `<tr><td colspan="6" class="empty-msg">기록이 없어요.</td></tr>`;
+  } else {
+    filtered.forEach(e => {
+      const eid = Number(e.id);
+      if (eid === editingId) {
+        rowsHTML += `<tr class="edit-tr">
+          <td><input type="date" id="ed-d-${eid}" value="${String(e.date).slice(0,10)}" /></td>
+          <td colspan="2"><input type="number" id="ed-s-${eid}" value="${e.shares}" min="0.01" step="0.01" /></td>
+          <td><select id="ed-t-${eid}"><option value="buy" ${e.type==='buy'?'selected':''}>매수</option><option value="sell" ${e.type==='sell'?'selected':''}>매도</option></select></td>
+          <td></td>
+          <td style="text-align:right;"><div class="act-btns"><button class="save-btn" onclick="saveEdit(${eid})">저장</button><button class="cancel-btn" onclick="cancelEdit()">취소</button></div></td>
+        </tr>`;
+      } else {
+        const cls = e.player === 'a' ? 'who-a' : 'who-b';
+        const pill = e.type === 'sell' ? '<span class="pill-sell">매도</span>' : '<span class="pill-buy">매수</span>';
+        const sign = e.type === 'sell' ? '-' : '+';
+        const runCls = (e._running || 0) > 0 ? 'running-pos' : 'running-zero';
+        const nameCell = activeTab === 'all' ? `<td class="${cls}">${NAMES[e.player]}</td>` : '';
+        rowsHTML += `<tr>
+          <td style="color:var(--color-text-secondary);">${fmtDate(e.date)}</td>
+          ${nameCell}
+          <td style="font-weight:500;">${sign}${fmtShares(e.shares)}주</td>
+          <td>${pill}</td>
+          <td class="${runCls}">${fmtShares(e._running || 0)}주</td>
+          <td style="text-align:right;"><div class="act-btns">
+            <button class="icon-btn" onclick="startEdit(${eid})" aria-label="수정"><i class="ti ti-edit"></i></button>
+            <button class="icon-btn del" onclick="deleteEntry(${eid})" aria-label="삭제"><i class="ti ti-trash"></i></button>
+          </div></td>
+        </tr>`;
+      }
+    });
+  }
+
+  const nameHeader = activeTab === 'all' ? '<th>이름</th>' : '';
+
+  document.getElementById('app').innerHTML = `
+    <div class="header">
+      <div class="header-left"><h2>QQQM 경쟁 트래커</h2><span class="badge-tag">나스닥 100</span></div>
+      <button class="logout-btn" onclick="logout()">
+        <div class="av ${AV_CLS[currentUser]}" style="width:20px;height:20px;font-size:10px;">${INITIALS[currentUser]}</div>
+        ${NAMES[currentUser]} · 나가기
+      </button>
+    </div>
+
+    <div class="scoreboard">
+      <div class="player-card ${leadA}">
+        <div class="plabel">플레이어 A</div>
+        <div class="pname-row"><div class="av av-a" style="width:36px;height:36px;font-size:13px;">전</div><div class="pname">전재홍</div></div>
+        <div class="shares-big">${fmtShares(sharesA)}</div>
+        <div class="shares-unit">주 보유</div>
+        ${badge(sharesA, sharesB)}
+      </div>
+      <div class="player-card ${leadB}">
+        <div class="plabel">플레이어 B</div>
+        <div class="pname-row"><div class="av av-b" style="width:36px;height:36px;font-size:13px;">김</div><div class="pname">김태언</div></div>
+        <div class="shares-big">${fmtShares(sharesB)}</div>
+        <div class="shares-unit">주 보유</div>
+        ${badge(sharesB, sharesA)}
+      </div>
+    </div>
+
+    <div class="bar-section">
+      <div class="bar-label">보유 비율 비교</div>
+      <div class="bar-wrap"><div class="bar-a" style="width:${pctA}%;"></div><div class="bar-b" style="width:${pctB}%;"></div></div>
+      <div class="bar-legend">
+        <span><span class="dot dot-a"></span>전재홍 ${fmtShares(sharesA)}주</span>
+        <span><span class="dot dot-b"></span>김태언 ${fmtShares(sharesB)}주</span>
+      </div>
+    </div>
+
+    <div class="input-section">
+      <div class="input-title"><i class="ti ti-plus" aria-hidden="true"></i> 거래 입력 — ${NAMES[currentUser]}</div>
+      <div class="input-grid">
+        <div class="input-group"><label>날짜</label><input type="date" id="inp-date" value="${todayStr()}" /></div>
+        <div class="input-group"><label>주수</label><input type="number" id="inp-shares" min="0.01" step="0.01" placeholder="예: 0.5" onkeydown="if(event.key==='Enter')addEntry()" /></div>
+        <div class="input-group"><label>구분</label><select id="inp-type"><option value="buy">매수</option><option value="sell">매도</option></select></div>
+        <button class="add-btn" id="add-btn" onclick="addEntry()">추가</button>
+      </div>
+    </div>
+
+    <div class="history-section">
+      <div class="history-header">
+        <div class="history-title-row">
+          <div class="history-title">매수/매도 기록</div>
+          <button class="refresh-btn" onclick="doRefresh()"><i class="ti ti-refresh" aria-hidden="true"></i> 새로고침</button>
+        </div>
+        <div class="tabs">${tabsHTML}</div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>날짜</th>${nameHeader}<th>주수</th><th>구분</th><th>총보유수량</th><th></th></tr></thead>
+          <tbody>${rowsHTML}</tbody>
+        </table>
+      </div>
+    </div>
+  `;
+  setTimeout(() => document.getElementById('inp-shares')?.focus(), 50);
+}
+
+function setTab(key) { activeTab = key; editingId = null; renderMain(); }
+
+async function doRefresh() {
+  const btn = document.querySelector('.refresh-btn');
+  if (btn) { btn.style.opacity = '0.5'; btn.style.pointerEvents = 'none'; }
+  try {
+    entries = await loadEntries();
+    attachRunning();
+    showToast('새로고침 완료!');
+  } catch(e) { showToast('새로고침 실패. 다시 시도해주세요.'); }
+  renderMain();
+}
+
+async function addEntry() {
+  const el = document.getElementById('inp-shares');
+  const shares = parseFloat(el.value);
+  if (!shares || shares <= 0) { el.focus(); return; }
+  const date = document.getElementById('inp-date').value || todayStr();
+  const type = document.getElementById('inp-type').value;
+  const id = Date.now();
+  const btn = document.getElementById('add-btn');
+  btn.disabled = true; btn.textContent = '저장 중...';
+  try {
+    await insertEntry({ id, player: currentUser, date, shares: Math.round(shares * 10000) / 10000, type });
+    entries.unshift({ id, player: currentUser, date, shares: Math.round(shares * 10000) / 10000, type });
+    showToast('기록 추가 완료! ✅');
+  } catch(e) {
+    showToast('저장 실패: ' + e.message);
+  }
+  editingId = null;
+  renderMain();
+}
+
+function startEdit(id) { editingId = id; renderMain(); setTimeout(() => document.getElementById('ed-s-'+id)?.focus(), 50); }
+function cancelEdit() { editingId = null; renderMain(); }
+
+async function saveEdit(id) {
+  const shares = parseFloat(document.getElementById('ed-s-'+id).value);
+  if (!shares || shares <= 0) return;
+  const date = document.getElementById('ed-d-'+id).value || todayStr();
+  const type = document.getElementById('ed-t-'+id).value;
+  try {
+    await updateEntry(id, { date, shares: Math.round(shares * 10000) / 10000, type });
+    const idx = entries.findIndex(e => Number(e.id) === id);
+    if (idx !== -1) entries[idx] = { ...entries[idx], shares: Math.round(shares * 10000) / 10000, date, type };
+    showToast('수정 완료! ✅');
+  } catch(e) { showToast('수정 실패: ' + e.message); }
+  editingId = null;
+  renderMain();
+}
+
+async function deleteEntry(id) {
+  if (!confirm('이 기록을 삭제할까요?')) return;
+  try {
+    await deleteEntryApi(id);
+    entries = entries.filter(e => Number(e.id) !== id);
+    showToast('삭제 완료!');
+  } catch(e) { showToast('삭제 실패: ' + e.message); }
+  editingId = null;
+  renderMain();
+}
+
+renderLogin();
+</script>
